@@ -1,3 +1,9 @@
+# Changes from upstream
+
+- Capability to collapse all medias, with a setting to collapse by default
+- Dark theme is darker.
+
+
 [![npm](https://img.shields.io/npm/v/matrix-react-sdk)](https://www.npmjs.com/package/matrix-react-sdk)
 ![Tests](https://github.com/matrix-org/matrix-react-sdk/actions/workflows/tests.yml/badge.svg)
 [![Playwright](https://img.shields.io/badge/Playwright-end_to_end_tests-blue)](https://e2e-develop--matrix-react-sdk.netlify.app/)
