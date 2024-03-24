@@ -58,7 +58,9 @@ export default class MVideoBody extends React.PureComponent<IBodyProps, IState> 
             error: null,
             posterLoading: false,
             blurhashUrl: null,
+            visible: !SettingsStore.getValue("collapseMedia"),
         };
+        this.toggleVisibility = this.toggleVisibility.bind(this);
     }
 
     private getContentUrl(): string | undefined {
@@ -232,6 +234,10 @@ export default class MVideoBody extends React.PureComponent<IBodyProps, IState> 
         return this.showFileBody && <MFileBody {...this.props} showGenericPlaceholder={false} />;
     };
 
+    private toggleVisibility() {
+        this.setState({visible: !this.state.visible});
+    }
+
     public render(): React.ReactNode {
         const content = this.props.mxEvent.getContent();
         const autoplay = !this.props.inhibitInteraction && SettingsStore.getValue("autoplayVideo");
@@ -281,28 +287,38 @@ export default class MVideoBody extends React.PureComponent<IBodyProps, IState> 
         }
 
         const fileBody = this.getFileBody();
-        return (
-            <span className="mx_MVideoBody">
-                <div className="mx_MVideoBody_container" style={{ maxWidth, maxHeight, aspectRatio }}>
-                    <video
-                        className="mx_MVideoBody"
-                        ref={this.videoRef}
-                        src={contentUrl}
-                        title={content.body}
-                        controls={!this.props.inhibitInteraction}
-                        // Disable downloading as it doesn't work with e2ee video,
-                        // users should use the dedicated Download button in the Message Action Bar
-                        controlsList="nodownload"
-                        preload={preload}
-                        muted={autoplay}
-                        autoPlay={autoplay}
-                        poster={poster}
-                        onPlay={this.videoOnPlay}
-                    />
-                    {spaceFiller}
-                </div>
-                {fileBody}
-            </span>
-        );
+        if (this.state.visible)
+          return (
+              <span className="mx_MVideoBody">
+                  <button style={{float: "right"}} onClick={this.toggleVisibility}>collapse</button>
+                  <div className="mx_MVideoBody_container" style={{ maxWidth, maxHeight, aspectRatio }}>
+                      <video
+                          style={{display: "inline"}}
+                          className="mx_MVideoBody"
+                          ref={this.videoRef}
+                          src={contentUrl}
+                          title={content.body}
+                          controls={!this.props.inhibitInteraction}
+                          // Disable downloading as it doesn't work with e2ee video,
+                          // users should use the dedicated Download button in the Message Action Bar
+                          controlsList="nodownload"
+                          preload={preload}
+                          muted={autoplay}
+                          autoPlay={autoplay}
+                          poster={poster}
+                          onPlay={this.videoOnPlay}
+                      />
+                      {spaceFiller}
+                  </div>
+                  {fileBody}
+              </span>
+          );
+        else
+            return (
+                <span className="mx_MVideoBody">
+                    <button style={{float: "right"}} onClick={this.toggleVisibility}>expand</button>
+                    <i>(Hidden video)</i>
+                </span>
+                );
     }
 }

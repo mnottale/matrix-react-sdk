@@ -995,6 +995,11 @@ export const SETTINGS: { [setting: string]: ISetting } = {
         displayName: _td("settings|image_thumbnails"),
         default: true,
     },
+    "collapseMedia": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        displayName: _td("settings|collapse_media"),
+        default: false,
+    },
     "RightPanel.phasesGlobal": {
         supportedLevels: [SettingLevel.DEVICE],
         default: null,

@@ -86,7 +86,9 @@ export default class MImageBody extends React.Component<IBodyProps, IState> {
             hover: false,
             showImage: SettingsStore.getValue("showImages"),
             placeholder: Placeholder.NoImage,
+            visible: !SettingsStore.getValue("collapseMedia"),
         };
+        this.toggleVisibility = this.toggleVisibility.bind(this);
     }
 
     protected showImage(): void {
@@ -611,6 +613,9 @@ export default class MImageBody extends React.Component<IBodyProps, IState> {
         }
     }
 
+    private toggleVisibility() {
+        this.setState({visible: !this.state.visible});
+    }
     public render(): React.ReactNode {
         const content = this.props.mxEvent.getContent<ImageContent>();
 
@@ -639,12 +644,21 @@ export default class MImageBody extends React.Component<IBodyProps, IState> {
         const thumbnail = this.messageContent(contentUrl, thumbUrl, content);
         const fileBody = this.getFileBody();
 
+	if (this.state.visible)
         return (
             <div className="mx_MImageBody">
+                <button style={{float: "right"}} onClick={this.toggleVisibility}>collapse</button>
                 {thumbnail}
                 {fileBody}
             </div>
         );
+        else
+          return (
+            <div className="mx_MImageBody">
+                <button style={{float: "right"}} onClick={this.toggleVisibility}>expand</button>
+                <i>(Hidden image)</i>
+            </div>
+          );
     }
 }
 

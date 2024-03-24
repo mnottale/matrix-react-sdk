@@ -34,8 +34,25 @@ interface IProps {
     children?: ReactNode;
 }
 
-export default class LinkPreviewWidget extends React.Component<IProps> {
+interface IState {
+    visible: boolean;
+}
+
+export default class LinkPreviewWidget extends React.Component<IProps, IState> {
     private image = createRef<HTMLImageElement>();
+
+    public constructor(props: IBodyProps) {
+        super(props);
+
+        this.state = {
+            visible: !SettingsStore.getValue("collapseMedia"),
+        };
+        this.toggleVisibility = this.toggleVisibility.bind(this);
+    }
+
+    private toggleVisibility() {
+        this.setState({visible: !this.state.visible});
+    }
 
     private onImageClick = (ev: React.MouseEvent): void => {
         const p = this.props.preview;
@@ -118,30 +135,39 @@ export default class LinkPreviewWidget extends React.Component<IProps> {
         );
         const needsTooltip = PlatformPeg.get()?.needsUrlTooltips() && this.props.link !== title;
 
-        return (
-            <div className="mx_LinkPreviewWidget">
-                <div className="mx_LinkPreviewWidget_wrapImageCaption">
-                    {img}
-                    <div className="mx_LinkPreviewWidget_caption">
-                        <div className="mx_LinkPreviewWidget_title">
-                            {needsTooltip ? (
-                                <LinkWithTooltip tooltip={new URL(this.props.link, window.location.href).toString()}>
-                                    {anchor}
-                                </LinkWithTooltip>
-                            ) : (
-                                anchor
-                            )}
-                            {p["og:site_name"] && (
-                                <span className="mx_LinkPreviewWidget_siteName">{" - " + p["og:site_name"]}</span>
-                            )}
-                        </div>
-                        <div className="mx_LinkPreviewWidget_description">
-                            <Linkify>{description}</Linkify>
-                        </div>
-                    </div>
+        if (this.state.visible)
+          return (
+              <div className="mx_LinkPreviewWidget">
+                  <div className="mx_LinkPreviewWidget_wrapImageCaption">
+                      {img}
+                      <div className="mx_LinkPreviewWidget_caption">
+                          <div className="mx_LinkPreviewWidget_title">
+                              {needsTooltip ? (
+                                  <LinkWithTooltip tooltip={new URL(this.props.link, window.location.href).toString()}>
+                                      {anchor}
+                                  </LinkWithTooltip>
+                              ) : (
+                                  anchor
+                              )}
+                              {p["og:site_name"] && (
+                                  <span className="mx_LinkPreviewWidget_siteName">{" - " + p["og:site_name"]}</span>
+                              )}
+                          </div>
+                          <div className="mx_LinkPreviewWidget_description">
+                              <Linkify>{description}</Linkify>
+                          </div>
+                      </div>
+                  </div>
+                  {this.props.children}
+                  <button style={{float: "right"}} onClick={this.toggleVisibility}>collapse</button>
+              </div>
+          );
+        else
+            return (
+                <div className="mx_LinkPreviewWidget">
+                    <button style={{float: "right"}} onClick={this.toggleVisibility}>expand</button>
+                    <i>(Hidden preview)</i>
                 </div>
-                {this.props.children}
-            </div>
-        );
+                );
     }
 }

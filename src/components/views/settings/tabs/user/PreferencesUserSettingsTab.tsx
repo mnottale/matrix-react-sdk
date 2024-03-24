@@ -71,7 +71,7 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
         "showCodeLineNumbers",
     ];
 
-    private static IMAGES_AND_VIDEOS_SETTINGS = ["urlPreviewsEnabled", "autoplayGifs", "autoplayVideo", "showImages"];
+    private static IMAGES_AND_VIDEOS_SETTINGS = ["urlPreviewsEnabled", "autoplayGifs", "autoplayVideo", "showImages", "collapseMedia"];
 
     private static TIMELINE_SETTINGS = [
         "showTypingNotifications",
